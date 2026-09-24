@@ -1,4 +1,10 @@
-const sqlite3 = require('sqlite3').verbose();
+let sqlite3 = null;
+try {
+  sqlite3 = require('sqlite3').verbose();
+} catch (e) {
+  console.warn('⚠️ SQLite3 native addon could not be loaded on this host. Falling back to persistent JSON store:', e.message);
+}
+
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
@@ -13,17 +19,27 @@ if (!fs.existsSync(DATA_DIR)) {
 
 class DatabaseManager {
   constructor() {
-    this.db = new sqlite3.Database(DB_FILE, (err) => {
-      if (err) {
-        console.error('Failed connecting to SQLite database:', err.message);
-      } else {
-        console.log('✅ SQLite Database connected:', DB_FILE);
+    this.db = null;
+    if (sqlite3) {
+      try {
+        this.db = new sqlite3.Database(DB_FILE, (err) => {
+          if (err) {
+            console.error('Failed connecting to SQLite database:', err.message);
+          } else {
+            console.log('✅ SQLite Database connected:', DB_FILE);
+          }
+        });
+        this.initTables();
+      } catch (err) {
+        console.warn('⚠️ SQLite initialization warning:', err.message);
       }
-    });
-    this.initTables();
+    } else {
+      console.log('📦 Operating in persistent JSON document storage mode.');
+    }
   }
 
   initTables() {
+    if (!this.db) return;
     this.db.serialize(() => {
       // 1. Users Table
       this.db.run(`
@@ -131,6 +147,7 @@ class DatabaseManager {
   }
 
   logTransaction(userId, type, amount, balanceAfter, description = '') {
+    if (!this.db) return;
     const txId = 'tx_' + crypto.randomUUID().slice(0, 8);
     const now = new Date().toISOString();
     this.db.run(
@@ -143,6 +160,7 @@ class DatabaseManager {
   }
 
   recordHandHistory(tableId, handNumber, pot, winnerIds, winningHandType) {
+    if (!this.db) return;
     const id = 'hand_' + crypto.randomUUID().slice(0, 8);
     const now = new Date().toISOString();
     this.db.run(
