@@ -274,9 +274,9 @@ body {
 /* Live 3D Animated Human Dealer Character (Large, realistic, no circle/sticker, animated movement) */
 .live-dealer-podium {
   position: absolute;
-  top: 21%;
+  top: 1%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, 0);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -742,7 +742,7 @@ body {
 /* Center Table Pot (Minimalist, Clean & Spacious) */
 .table-center-hub {
   position: absolute;
-  top: 52%;
+  top: 38%;
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
@@ -2576,8 +2576,8 @@ body {
   }
 
   .live-dealer-podium {
-    top: 22%;
-    transform: translate(-50%, -50%) scale(0.85);
+    top: 1%;
+    transform: translate(-50%, 0) scale(0.82);
   }
 
   .dealer-speech-bubble {
@@ -2587,6 +2587,7 @@ body {
   }
 
   .table-center-hub {
+    top: 38%;
     transform: translate(-50%, -50%) scale(0.82);
   }
 
@@ -2845,12 +2846,12 @@ body {
   }
 
   .live-dealer-podium {
-    top: 22%;
-    transform: translate(-50%, -50%) scale(0.72);
+    top: 0%;
+    transform: translate(-50%, 0) scale(0.70);
   }
 
   .table-center-hub {
-    top: 50%;
+    top: 38%;
     transform: translate(-50%, -50%) scale(0.72);
   }
 

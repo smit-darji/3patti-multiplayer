@@ -32,7 +32,7 @@
    ============================================= */
 .seat-self .player-cards-container {
   position: absolute;
-  top: -102px;
+  top: -58px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -40,13 +40,13 @@
   justify-content: center;
   gap: 0;
   z-index: 30;
-  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.95));
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.9));
   pointer-events: auto;
 }
 
 .seat-self .card-item {
-  width: 52px;
-  height: 76px;
+  width: 44px;
+  height: 64px;
   perspective: 1400px;
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), margin 0.3s ease;
 }
