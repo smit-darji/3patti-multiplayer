@@ -1330,15 +1330,11 @@ class TeenPattiApp {
         <div class="kiss-burst-item b1">💖</div>
         <div class="kiss-burst-item b2">💋</div>
         <div class="kiss-burst-item b3">✨</div>
-        <div class="kiss-bonus-tag" style="background:linear-gradient(135deg,#ec4899,#f59e0b);">${randomPhrase}</div>
       `;
       burst.style.left = `${x}px`;
       burst.style.top = `${y}px`;
       felt.appendChild(burst);
       setTimeout(() => burst.remove(), 2200);
-    }
-    if (!isAuto) {
-      this.showToast("💋 Carnival VIP Queen: Mwah! Looking lucky, handsome! Win this pot! 🍀", "success");
     }
   }
 
@@ -2075,11 +2071,6 @@ class TeenPattiApp {
         const formattedGift = this.formatChips(data.bonusGift);
         const isVip = (data.tipAmount || 0) >= 1000;
         this.animateTipCoinsFromSeat(data.seatIndex, formattedGift, data.userName, data.tipAmount);
-        if (isVip) {
-          this.showToast(`💋 Scarlett blew a VIP Kiss to ${data.userName} & blessed them with Lucky Cards! 🍀✨`, 'success');
-        } else {
-          this.showToast(`🪙 ${data.userName} tipped Scarlett ${formattedTip}!`, 'info');
-        }
         break;
 
       case 'SIDESHOW_REQUESTED':
