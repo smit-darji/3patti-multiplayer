@@ -1,0 +1,20 @@
+services:
+  teen-patti:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: teen-patti-game
+    restart: unless-stopped
+    ports:
+      - "${HOST_PORT:-3001}:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+    volumes:
+      # Persist SQLite Database, JSON Backup, and data directory
+      - teen-patti-data:/app/server/data
+      - ./public:/app/public
+
+volumes:
+  teen-patti-data:
+    driver: local

@@ -1,0 +1,10 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+.dockerignore
+.agents
+scratch
+/tmp
+*.md
+test_evaluator.js

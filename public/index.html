@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teen Patti Royale - Official 10-Player Multiplayer 3 Patti</title>
+  
+  <!-- Google Fonts: Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/style.css?v=2.8">
+  <link rel="stylesheet" href="/css/cards.css?v=2.8">
+  <script src="/vendor/elements.cardmeister.min.js"></script>
+  <script src="/js/avatars.js"></script>
+</head>
+<body>
+  <div id="app">
+
+    <!-- ==========================================================
+         VIEW 1: HOME PAGE (LOBBY & ROOM CREATION)
+         ========================================================== -->
+    <div id="view-home" class="view-container">
+      <!-- Home Header -->
+      <header class="header-bar">
+        <div class="brand-section">
+          <div class="brand-logo">♠3</div>
+          <div>
+            <h1 class="brand-title">TEEN PATTI ROYALE</h1>
+            <div class="brand-subtitle">VIP 10-Player Casino</div>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- User Profile: Visible Coin Balance -->
+          <div class="wallet-badge" id="home-profile-badge" title="Your Personal Coins Balance">
+            <img src="" id="home-user-avatar" class="player-avatar-img" style="width:28px;height:28px;" alt="Avatar">
+            <div>
+              <div id="home-user-name" style="font-size:0.75rem;color:#f1f5f9;font-weight:700;">Player</div>
+              <div class="wallet-chips-row">
+                <span class="coin-glint">🪙</span>
+                <span class="wallet-chips" id="home-user-chips">₹10.00 Lakh</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Master Admin Button (Only visible for master account) -->
+          <button class="btn-hero-primary" id="btn-master-panel-toggle" style="display:none;padding:6px 14px;font-size:0.8rem;background:linear-gradient(135deg,#f59e0b,#b45309);">
+            👑 Master Admin
+          </button>
+
+          <button class="btn-icon" onclick="window.app.showRulesModal()" title="Rules & Hand Hierarchy">
+            <span>📜</span>
+          </button>
+
+          <button class="btn-icon btn-fullscreen-toggle" id="btn-lobby-fullscreen" onclick="window.app.toggleFullscreen()" title="Toggle Fullscreen Mode">
+            <span class="fs-icon">⛶</span>
+          </button>
+
+          <!-- Login / Register button for logged-out guests -->
+          <button class="btn-hero-primary" id="btn-header-login" onclick="window.app.showAuthModal()" style="padding:6px 14px;font-size:0.8rem;background:linear-gradient(135deg,#10b981,#059669);border:1px solid #34d399;">
+            🔑 Login / Register
+          </button>
+
+          <!-- High-Visibility Luxury Logout Button -->
+          <button class="btn-logout-luxury" id="btn-header-logout" onclick="window.app.handleLogout()" title="Logout from Teen Patti Royale">
+            <span>🚪</span>
+            <span class="logout-btn-label">Logout</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Home Main Scroll Area -->
+      <main class="home-scroll-container">
+        <!-- Hero Welcome Card -->
+        <div class="home-hero-card">
+          <div class="hero-text-side">
+            <h2>Experience Real Teen Patti</h2>
+            <p>
+              Create your private table and share your <strong>Room ID</strong> with up to 9 other players, or choose from our official high-stakes VIP lounges. Strictly official Indian 3 Patti rules!
+            </p>
+            <div class="hero-actions-row">
+              <button class="btn-hero-primary" onclick="window.app.openCreateRoomModal()">
+                <span>➕ Create New Room</span>
+              </button>
+
+              <div class="hero-join-box">
+                <input type="text" id="home-room-code-input" class="hero-join-input" placeholder="Enter Room ID" maxlength="10">
+                <button class="btn-hero-join" onclick="window.app.handleJoinByInput()">Join Room</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-profile-side">
+            <img src="" id="hero-avatar-big" class="hero-profile-avatar" alt="User Avatar">
+            <div class="hero-profile-name" id="hero-username-big">Player</div>
+            <div class="hero-coin-badge" title="Your Private Wallet Coins">
+              <span class="coin-glint">🪙</span>
+              <span class="hero-profile-chips" id="hero-chips-big">₹10.00 Lakh</span>
+            </div>
+            <span class="master-tag" id="hero-role-badge" onclick="window.app.openMasterPanel()" style="cursor:pointer;" title="Click to open Master Admin Panel">VIP PLAYER</span>
+            
+            <!-- Master Admin Button in Hero Profile -->
+            <button class="btn-hero-primary" id="hero-btn-master-panel" onclick="window.app.openMasterPanel()" style="display:none;width:100%;margin-top:6px;background:linear-gradient(135deg,#f59e0b,#b45309);font-size:0.82rem;padding:7px 12px;box-shadow:0 0 15px rgba(245,158,11,0.4);border:1px solid #fde047;">
+              👑 Master Admin Panel (Live Chips)
+            </button>
+
+            <button class="btn-hero-logout" onclick="window.app.handleLogout()" title="Logout from account">
+              <span>🚪 Logout</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Hot Dealers Showcase Banner -->
+        <div class="dealers-showcase-banner">
+          <div class="dealers-banner-header">
+            <span class="live-pulse-dot"></span>
+            <span class="banner-title-text">MEET OUR LIVE CASINO DEALERS</span>
+          </div>
+          <div class="dealers-cards-row">
+            <div class="dealer-showcase-card">
+              <div class="dealer-showcase-img-wrap">
+                <img src="/images/dealer_scarlett_transparent.png" class="dealer-showcase-img" alt="Main Dealer Scarlett" />
+                <span class="dealer-badge-tag main-dealer-tag">LIVE MAIN DEALER</span>
+              </div>
+              <div class="dealer-showcase-info">
+                <h4>Scarlett</h4>
+                <p>Host of every table • Deals cards, blows kisses & brings luck to every player!</p>
+              </div>
+            </div>
+            <div class="dealer-showcase-card vip-companion-card">
+              <div class="dealer-showcase-img-wrap">
+                <img src="/images/dealer_carnival_vip.png" class="dealer-showcase-img" alt="10K VIP Carnival Queen" />
+                <span class="dealer-badge-tag vip-dealer-tag">👑 10K VIP EXCLUSIVE</span>
+              </div>
+              <div class="dealer-showcase-info">
+                <h4>Carnival Queen</h4>
+                <p>Exclusive to 1 player per round with 10K tip • Sits right beside your seat with passionate kisses & golden card blessings!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+
+    <!-- ==========================================================
+         VIEW 2: GAME TABLE SCREEN (10-PLAYER OVAL FELT)
+         ========================================================== -->
+    <div id="view-table" class="view-container view-hidden">
+      <!-- Top Casino Header Navigation -->
+      <header class="header-bar">
+        <div class="brand-section">
+          <button class="btn-leave-table" onclick="window.app.handleLeaveTable()" title="Exit table and return to Home Lobby">
+            <span>🚪</span>
+            <span class="leave-btn-label">Leave Table</span>
+          </button>
+          <div class="brand-text-wrap">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <h1 class="brand-title" id="header-table-name" style="font-size:1.05rem;">Emerald Lounge</h1>
+              <span class="badge-host-crown" id="header-host-badge" style="display:none;background:linear-gradient(135deg,#f59e0b,#b45309);color:#fff;font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:12px;border:1px solid #fde047;letter-spacing:0.5px;box-shadow:0 0 10px rgba(245,158,11,0.5);">👑 HOST</span>
+            </div>
+            <div class="brand-subtitle" id="table-subtitle">10-Player Table</div>
+          </div>
+        </div>
+
+        <!-- Room Code & Stakes -->
+        <div class="table-stats-bar">
+          <div class="room-code-badge" id="header-room-badge" onclick="window.app ? window.app.copyCurrentRoomCode() : null" title="Click to copy Room Code" style="cursor:pointer;">
+            <span>Room:</span>
+            <strong id="header-room-code" style="color:#ffd700;">NOVICE</strong>
+            <span class="btn-copy-code" title="Copy Room Code">📋</span>
+          </div>
+
+          <button class="btn-hero-primary" id="btn-header-copy-link" onclick="window.app ? window.app.copyCurrentRoomLink() : null" style="padding:4px 10px;font-size:0.75rem;background:linear-gradient(135deg,#3b82f6,#1d4ed8);border:1px solid #60a5fa;box-shadow:0 0 10px rgba(59,130,246,0.4);cursor:pointer;" title="Copy Clickable Invite URL for Friends">
+            🔗 Invite Link
+          </button>
+
+          <button class="btn-room-friends" onclick="window.app.openRoomFriendsModal()" title="View Friends in this Room">
+            <span>👥</span>
+            <span id="header-friends-count" class="badge-friends-count">1/10</span>
+          </button>
+
+          <div class="stat-item">
+            <span class="stat-label">Boot:</span>
+            <span class="stat-val" id="header-boot-amount">₹1,000</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Pot Limit:</span>
+            <span class="stat-val" id="header-pot-limit">₹10.24 Lakh</span>
+          </div>
+        </div>
+
+        <!-- Header Right -->
+        <div class="header-right">
+          <!-- Current Player Wallet Chips -->
+          <div class="wallet-badge" title="Your Personal Coins Balance">
+            <img src="" id="table-user-avatar" class="player-avatar-img" style="width:24px;height:24px;" alt="Avatar">
+            <div>
+              <div id="table-user-name" style="font-size:0.7rem;color:#94a3b8;line-height:1;">Player</div>
+              <div class="wallet-chips-row">
+                <span class="coin-glint">🪙</span>
+                <span class="wallet-chips" id="table-user-chips">₹10.00 Lakh</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Master Admin Button on table -->
+          <button class="btn-hero-primary" id="btn-table-master-panel" style="display:none;padding:4px 8px;font-size:0.75rem;background:linear-gradient(135deg,#f59e0b,#b45309);">
+            👑 Master
+          </button>
+
+          <button class="btn-icon" onclick="window.app.showRulesModal()" title="Rules & Hand Hierarchy">
+            <span>📜</span>
+          </button>
+
+          <button class="btn-icon btn-fullscreen-toggle" id="btn-fullscreen-toggle" onclick="window.app.toggleFullscreen()" title="Toggle Fullscreen Mode">
+            <span class="fs-icon">⛶</span>
+          </button>
+
+          <button class="btn-icon" id="btn-sound-toggle" title="Toggle Sound">
+            <span>🔊</span>
+          </button>
+
+          <!-- High-Visibility Luxury Logout Button on Table Screen -->
+          <button class="btn-logout-luxury" onclick="window.app.handleLogout()" title="Logout from Game">
+            <span>🚪</span>
+            <span class="logout-btn-label">Logout</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Casino Table -->
+      <main class="casino-main">
+        <div class="poker-table-wrapper" id="poker-table-wrapper">
+          <!-- Rendered dynamically by gameTable.js -->
+        </div>
+
+        <!-- Winner Celebration & Intermission Overlay -->
+        <div class="celebration-overlay" id="celebration-overlay">
+          <div class="winner-banner">
+            <div class="winner-crown">👑</div>
+            <div class="winner-headline" id="celebration-winner-name"></div>
+            <div class="winner-hand-type" id="celebration-hand-title"></div>
+            <div class="winner-amount-won" id="celebration-amount"></div>
+            <div class="winner-cards-display" id="celebration-cards-row"></div>
+
+            <!-- 5-Second Loader & Exit Room Button (Post-Game Waiting Intermission) -->
+            <div class="intermission-timer-box" id="intermission-timer-box">
+              <div class="intermission-loader-container">
+                <svg class="intermission-svg" viewBox="0 0 44 44">
+                  <circle class="intermission-bg-circle" cx="22" cy="22" r="18" />
+                  <circle class="intermission-fill-circle" id="intermission-fill-circle" cx="22" cy="22" r="18" />
+                </svg>
+                <span class="intermission-countdown-text" id="intermission-countdown-text">5s</span>
+              </div>
+              <div class="intermission-subtext">Next game starts in <strong id="intermission-timer-bold">5s</strong></div>
+            </div>
+
+            <div class="intermission-actions-bar">
+              <button class="btn-exit-room-intermission" onclick="window.app.handleLeaveTable()" title="Exit Room and return to Home Lobby">
+                🚪 Exit Room
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Bottom Action Dock (Player Controls) -->
+      <footer class="action-dock">
+        <!-- Top Status & Auxiliary Control Row -->
+        <div class="action-dock-top-row">
+          <!-- Turn Status Message -->
+          <div class="action-status-msg" id="action-status-msg">
+            <span class="turn-pulse-dot"></span>
+            <span>Loading table...</span>
+          </div>
+
+          <div class="action-aux-controls">
+            <!-- Auto Blind toggle -->
+            <div class="auto-blind-container" id="auto-blind-container" title="Bet Blind this turn automatically (resets each turn)">
+              <label class="auto-blind-switch">
+                <input type="checkbox" id="checkbox-auto-blind">
+                <span class="switch-slider"></span>
+              </label>
+              <span class="auto-blind-text">Auto Blind</span>
+            </div>
+
+            <!-- Stake Stepper: [-] [1x] [2x] [+] [Double] -->
+            <div class="stepper-group" id="stepper-group">
+              <button class="btn-stepper" id="btn-stepper-minus" title="Decrease Bet">-</button>
+              <span class="stepper-val-display" id="stepper-val-display">1x</span>
+              <button class="btn-stepper" id="btn-stepper-plus" title="Increase Bet">+</button>
+              <button class="btn-stepper" id="btn-stepper-double" style="width:auto;padding:0 8px;font-size:0.75rem;" title="Double Bet">2x</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Action Buttons Row (Responsive 5-Button Bar) -->
+        <div class="action-buttons-group">
+          <!-- See Cards Button -->
+          <button class="btn-game-action btn-see" id="btn-action-see" disabled>
+            <span>SEE CARDS</span>
+            <span class="action-sub-text">Blind 0/4</span>
+          </button>
+
+          <!-- Pack / Fold Button -->
+          <button class="btn-game-action btn-pack" id="btn-action-pack" disabled>
+            <span>PACK</span>
+            <span class="action-sub-text">Fold (F)</span>
+          </button>
+
+          <!-- Sideshow Button -->
+          <button class="btn-game-action btn-sideshow" id="btn-action-sideshow" disabled>
+            <span>SIDESHOW</span>
+            <span class="action-sub-text">Compare</span>
+          </button>
+
+          <!-- Chaal / Bet Button -->
+          <button class="btn-game-action btn-chaal" id="btn-action-chaal" disabled>
+            <span>CHAAL</span>
+            <span class="action-sub-text">₹1,000</span>
+          </button>
+
+          <!-- Show Button -->
+          <button class="btn-game-action btn-show" id="btn-action-show" disabled title="Show is available when 2 players remain">
+            <span>SHOW</span>
+            <span class="action-sub-text">2 Players</span>
+          </button>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- ==========================================================
+       MODALS
+       ========================================================== -->
+
+  <!-- Modal: Auth (Register / Login) - Active by default on load until authenticated -->
+  <div class="modal-overlay active" id="auth-modal">
+    <div class="modal-box">
+      <!-- Auth Switch Tabs -->
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab-btn active" id="tab-auth-login" onclick="window.app.switchAuthMode(false)">
+          🔑 Login
+        </button>
+        <button type="button" class="auth-tab-btn" id="tab-auth-register" onclick="window.app.switchAuthMode(true)">
+          ✨ Register (+₹10 Lakh)
+        </button>
+      </div>
+
+      <h2 class="modal-title" id="auth-modal-title">Login to Account</h2>
+      <p class="modal-desc" id="auth-modal-desc">Enter your username and password to access your chips & tables.</p>
+
+      <!-- Dynamic Auth Warning / Error Banner -->
+      <div id="auth-error-banner" style="display:none;margin-bottom:14px;padding:10px 14px;background:rgba(239,68,68,0.18);border:1.5px solid #ef4444;border-radius:10px;color:#fca5a5;font-size:0.83rem;line-height:1.4;text-align:left;"></div>
+
+      <form id="auth-form">
+        <div class="form-group">
+          <label class="form-label" for="auth-username">Username</label>
+          <input type="text" id="auth-username" class="form-input" placeholder="Enter username" required minlength="2" maxlength="15" autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="auth-password">Password</label>
+          <input type="password" id="auth-password" class="form-input" placeholder="Enter password (min 4 chars)" required minlength="4" autocomplete="current-password">
+        </div>
+
+        <!-- 💾 Save Password & Auto-Login Option -->
+        <div class="auth-remember-row">
+          <label class="auth-remember-label">
+            <input type="checkbox" id="auth-remember-me" checked>
+            <span>💾 Save Password & Auto-Login</span>
+          </label>
+        </div>
+
+        <div class="form-group" id="avatar-picker-group" style="display:none;">
+          <label class="form-label">Choose Your Casino Character</label>
+          <div class="avatar-picker" id="auth-avatar-picker">
+            <!-- Dynamically populated from HumanAvatars -->
+          </div>
+        </div>
+
+        <!-- Dual Action Buttons: Instant Login and Instant Register -->
+        <div style="display:flex;gap:10px;margin-top:12px;">
+          <button type="submit" id="auth-submit-btn" class="btn-primary-action" style="flex:1;" onclick="window.app ? window.app.submitAuth('login') : null">
+            🔑 Login & Play
+          </button>
+          <button type="button" id="auth-register-btn" class="btn-primary-action" style="flex:1;background:linear-gradient(135deg,#10b981,#059669);border:1px solid #34d399;" onclick="window.app ? window.app.submitAuth('register') : null">
+            ✨ Register (+₹10 Lakh)
+          </button>
+        </div>
+
+        <!-- Instant Quick Guest Play (Zero Wait Direct Entry) -->
+        <div style="margin-top:10px;">
+          <button type="button" class="btn-primary-action" onclick="window.app ? window.app.quickGuestLogin() : null" style="width:100%;background:linear-gradient(135deg,#3b82f6,#1d4ed8);border:1px solid #60a5fa;box-shadow:0 0 15px rgba(59,130,246,0.35);">
+            ⚡ Play Instantly as Guest (Free ₹10 Lakh)
+          </button>
+        </div>
+      </form>
+
+      <div style="text-align:center;margin-top:14px;">
+        <button type="button" id="auth-toggle-mode" onclick="window.app ? window.app.toggleAuthMode() : null" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:0.85rem;text-decoration:underline;">
+          Need an account? Register
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Create Custom Room -->
+  <div class="modal-overlay" id="create-room-modal">
+    <div class="modal-box" style="width: min(92vw, 480px);">
+      <h2 class="modal-title">Create Private 10-Player Room</h2>
+      <p class="modal-desc">Set your table stake rules and generate a Room ID to share with friends!</p>
+
+      <form id="create-room-form">
+        <div class="form-group">
+          <label class="form-label" for="create-room-name">Table / Club Name</label>
+          <input type="text" id="create-room-name" class="form-input" placeholder="e.g. High Stakes Lounge" required maxlength="25">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="create-room-boot">Boot Stake (Ante)</label>
+          <select id="create-room-boot" class="form-input" style="background:#0f172a;">
+            <option value="50">₹50 (Micro Stake)</option>
+            <option value="100">₹100 (Starter)</option>
+            <option value="250">₹250 (Bronze)</option>
+            <option value="500">₹500 (Silver)</option>
+            <option value="1000" selected>₹1,000 (Novice - Default)</option>
+            <option value="5000">₹5,000 (Casual)</option>
+            <option value="10000">₹10,000 (Pro Stake)</option>
+            <option value="25000">₹25,000 (Semi-Pro)</option>
+            <option value="50000">₹50,000 (High Roller)</option>
+            <option value="100000">₹1,00,000 (VIP Suite)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="create-room-variation">Game Variation</label>
+          <select id="create-room-variation" class="form-input" style="background:#0f172a;">
+            <option value="classic" selected>🃏 Classic Teen Patti (Standard)</option>
+            <option value="muflis">🔄 Muflis (Lowball - Lowest Hand Wins!)</option>
+            <option value="ak47">💥 AK47 (A, K, 4, 7 are Wild Jokers!)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="create-room-size">Table Size (Max Players)</label>
+          <select id="create-room-size" class="form-input" style="background:#0f172a;">
+            <option value="5">👥 5 Players (Intimate)</option>
+            <option value="10" selected>🏛️ 10 Players (Classic)</option>
+            <option value="15">🎪 15 Players (Large)</option>
+            <option value="20">🎰 20 Players (Grand)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="create-room-pot-limit">Pot Limit</label>
+          <select id="create-room-pot-limit" class="form-input" style="background:#0f172a;">
+            <option value="1024" selected>Standard (1024x Boot)</option>
+            <option value="2048">High Pot (2048x Boot)</option>
+            <option value="512">Quick Show (512x Boot)</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="display:flex;align-items:center;gap:10px;">
+          <input type="checkbox" id="create-room-private" checked style="width:18px;height:18px;">
+          <label for="create-room-private" style="color:#e2e8f0;font-size:0.85rem;cursor:pointer;">
+            Generate Private Room ID (Invite 9 Friends)
+          </label>
+        </div>
+
+        <button type="submit" class="btn-primary-action" style="margin-top:10px;">Create Room & Enter Table</button>
+      </form>
+
+      <div style="text-align:center;margin-top:14px;">
+        <button onclick="window.app.closeCreateRoomModal()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:0.85rem;">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Master Account Chip Management -->
+  <div class="modal-overlay" id="master-modal">
+    <div class="modal-box" style="width: min(96vw, 840px); max-height:88vh; overflow-y:auto;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <h2 class="modal-title" style="margin-bottom:0;">👑 Master Account Chip Management</h2>
+        <button class="btn-icon" onclick="document.getElementById('master-modal').classList.remove('active')">✕</button>
+      </div>
+      <p class="modal-desc" style="margin-bottom:14px;">Authorized Master Panel: View all user token balances and grant/deduct chips in real time.</p>
+
+      <!-- Bulk Master Controls -->
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px;padding:10px 14px;background:rgba(15,23,42,0.85);border:1px solid rgba(245,158,11,0.35);border-radius:12px;">
+        <span style="font-weight:900;color:#fef08a;font-size:0.85rem;">⚡ Bulk Actions:</span>
+        <button onclick="window.app.masterBulkResetZero()" style="background:linear-gradient(135deg,#ef4444,#b91c1c);color:white;border:1px solid #f87171;padding:6px 14px;border-radius:8px;font-size:0.8rem;font-weight:800;cursor:pointer;">
+          🗑️ Reset ALL Users to 0 Chips
+        </button>
+        <button onclick="window.app.masterBulkAddChips(2000000)" style="background:linear-gradient(135deg,#10b981,#059669);color:white;border:1px solid #34d399;padding:6px 14px;border-radius:8px;font-size:0.8rem;font-weight:800;cursor:pointer;">
+          💰 +20 Lakh Chips to ALL Users
+        </button>
+      </div>
+
+      <!-- Master Admin Tabs -->
+      <div style="display:flex;gap:8px;margin-bottom:14px;border-bottom:1px solid rgba(255,215,0,0.25);padding-bottom:8px;">
+        <button id="master-tab-users-btn" onclick="window.app.switchMasterTab('users')" style="background:linear-gradient(135deg,#f59e0b,#b45309);color:white;border:1px solid #fde047;padding:6px 14px;border-radius:8px;font-size:0.82rem;font-weight:800;cursor:pointer;">
+          👥 User Roster & Live Chips
+        </button>
+        <button id="master-tab-tables-btn" onclick="window.app.switchMasterTab('tables')" style="background:rgba(15,23,42,0.8);color:#cbd5e1;border:1px solid #475569;padding:6px 14px;border-radius:8px;font-size:0.82rem;font-weight:800;cursor:pointer;">
+          🏟️ Live Tables & Room Codes (Inspect Any Room)
+        </button>
+      </div>
+
+      <!-- TAB 1: USER ROSTER & LIVE CHIPS -->
+      <div id="master-view-users">
+        <!-- Search & Summary Stats -->
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <input type="text" id="master-user-search-input" class="form-input" placeholder="🔍 Search player by name..." style="max-width:280px;background:#0f172a;" oninput="window.app.filterMasterUsers(this.value)">
+          <div style="display:flex;gap:10px;">
+            <div style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);border-radius:10px;padding:6px 14px;font-size:0.82rem;color:#fef08a;">
+              Total Users: <strong id="master-total-users-count">0</strong>
+            </div>
+            <button class="btn-hero-join" id="btn-master-refresh-list" onclick="window.app.refreshMasterUsers()" style="padding:6px 14px;font-size:0.8rem;cursor:pointer;">
+              🔄 Refresh List
+            </button>
+          </div>
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table class="master-user-table" id="master-users-table">
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Role</th>
+                <th>Token Balance</th>
+                <th>Hands (W/P)</th>
+                <th>Grant / Deduct Chips</th>
+              </tr>
+            </thead>
+            <tbody id="master-users-tbody">
+              <!-- Filled dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 2: LIVE TABLES & ROOM CODES INSPECTOR -->
+      <div id="master-view-tables" style="display:none;">
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <p style="font-size:0.82rem;color:#94a3b8;margin:0;">Inspect any private or public room in real-time. As Master, you can see all player cards!</p>
+          <button class="btn-hero-join" onclick="window.app.loadMasterTables()" style="padding:6px 14px;font-size:0.8rem;cursor:pointer;">
+            🔄 Refresh Tables
+          </button>
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table class="master-user-table" id="master-tables-table">
+            <thead>
+              <tr>
+                <th>Room Code</th>
+                <th>Table Name</th>
+                <th>Mode & Variation</th>
+                <th>Players</th>
+                <th>Boot / Pot</th>
+                <th>Status</th>
+                <th>Master Action</th>
+              </tr>
+            </thead>
+            <tbody id="master-tables-tbody">
+              <!-- Filled dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:20px;">
+        <button class="btn-primary-action" onclick="document.getElementById('master-modal').classList.remove('active')" style="width:auto;padding:8px 24px;">Close Panel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Official Rules & Hand Hierarchy -->
+  <div class="modal-overlay" id="rules-modal">
+    <div class="modal-box" style="width: min(94vw, 600px); max-height: 85vh; overflow-y: auto;">
+      <h2 class="modal-title">Official Teen Patti Rules</h2>
+      <p class="modal-desc">Standard Indian 3 Patti Ranking Hierarchy & Rules</p>
+
+      <div style="display:flex;flex-direction:column;gap:12px;font-size:0.85rem;color:#e2e8f0;line-height:1.5;">
+        <div style="background:rgba(212,175,55,0.1);border-left:3px solid #d4af37;padding:8px 12px;border-radius:6px;">
+          <strong>1. Trail / Trio / Set (Highest):</strong> Three cards of identical rank. <strong>A-A-A</strong> is highest, <strong>2-2-2</strong> is lowest.
+        </div>
+        <div style="background:rgba(212,175,55,0.1);border-left:3px solid #d4af37;padding:8px 12px;border-radius:6px;">
+          <strong>2. Pure Sequence / Straight Flush:</strong> 3 consecutive cards of SAME suit. In Teen Patti, <strong>A-2-3</strong> is the highest sequence, followed by <strong>A-K-Q</strong>, K-Q-J down to 4-3-2.
+        </div>
+        <div style="background:rgba(212,175,55,0.1);border-left:3px solid #d4af37;padding:8px 12px;border-radius:6px;">
+          <strong>3. Sequence / Normal Run:</strong> 3 consecutive cards of DIFFERENT suits. <strong>A-2-3</strong> is highest, followed by <strong>A-K-Q</strong> down to 4-3-2.
+        </div>
+        <div style="background:rgba(212,175,55,0.1);border-left:3px solid #d4af37;padding:8px 12px;border-radius:6px;">
+          <strong>4. Color / Flush:</strong> 3 cards of SAME suit. Compared by highest card (A-K-J > A-K-10).
+        </div>
+        <div style="background:rgba(212,175,55,0.1);border-left:3px solid #d4af37;padding:8px 12px;border-radius:6px;">
+          <strong>5. Pair:</strong> 2 cards of same rank. Pair of Aces (A-A-K) beats Pair of Kings (K-K-Q).
+        </div>
+        <div style="background:rgba(212,175,55,0.1);border-left:3px solid #d4af37;padding:8px 12px;border-radius:6px;">
+          <strong>6. High Card:</strong> No combination. Evaluated by highest card down to lowest.
+        </div>
+
+        <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:10px;margin-top:6px;">
+          <h4 style="color:#ffd700;margin-bottom:6px;">Blind vs Seen Rules:</h4>
+          <p>• <strong>Blind Player:</strong> Bets 1x or 2x stake (up to 4 blind rounds).</p>
+          <p>• <strong>Seen Player:</strong> Bets 2x or 4x stake (double blind amount).</p>
+          <p>• <strong>Sideshow:</strong> A Seen player can request sideshow with previous seen player.</p>
+          <p>• <strong>Show:</strong> Allowed when only 2 active players remain in hand.</p>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:18px;">
+        <button class="btn-primary-action" onclick="window.app.hideRulesModal()" style="width:auto;padding:8px 24px;">Got It!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sideshow Floating In-Game Prompt Dialog (No dark backdrop blackout) -->
+  <div class="sideshow-hud-overlay" id="sideshow-modal" style="display:none;">
+    <div class="sideshow-hud-card">
+      <!-- Animated Swords -->
+      <div class="sideshow-hud-icon">⚔️</div>
+
+      <div class="sideshow-hud-title">SIDESHOW CHALLENGE!</div>
+
+      <div class="sideshow-hud-info">
+        <div class="sideshow-hud-challenger">
+          <span style="color:#a78bfa;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;">Challenged by</span>
+          <strong id="sideshow-requester-name" style="color:#ffd700;font-size:1.15rem;display:block;">Player</strong>
+        </div>
+        <div class="sideshow-hud-stake">
+          <span style="color:#94a3b8;font-size:0.75rem;">Chaal Bet</span>
+          <span id="sideshow-amount" style="color:#86efac;font-size:1.2rem;font-weight:900;display:block;">₹2,000</span>
+        </div>
+      </div>
+
+      <div class="sideshow-hud-desc">
+        Secret 1-on-1 card comparison. The weaker hand will instantly <strong>FOLD</strong>.
+      </div>
+
+      <!-- Live Countdown Progress Bar -->
+      <div class="sideshow-timer-bar-wrap">
+        <div class="sideshow-timer-bar-fill" id="sideshow-timer-bar-fill"></div>
+      </div>
+      <div class="sideshow-timer-subtext">
+        Auto-declining in <strong id="sideshow-auto-decline-timer" style="color:#f87171;">10s</strong>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="sideshow-hud-btn-row">
+        <button id="btn-sideshow-accept" class="btn-sideshow-hud-accept" onclick="window.app.handleSideshowResponse(true)">
+          <span style="font-size:1.1rem;">✅</span>
+          <div>
+            <div style="font-weight:900;font-size:0.95rem;">ACCEPT</div>
+            <div style="font-size:0.68rem;opacity:0.85;">Compare Cards</div>
+          </div>
+        </button>
+
+        <button id="btn-sideshow-decline" class="btn-sideshow-hud-decline" onclick="window.app.handleSideshowResponse(false)">
+          <span style="font-size:1.1rem;">❌</span>
+          <div>
+            <div style="font-weight:900;font-size:0.95rem;">DECLINE</div>
+            <div style="font-size:0.68rem;opacity:0.85;">Stay in Hand</div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Secret Sideshow Card Comparison (ONLY for the 2 participating players) -->
+  <div class="modal-overlay" id="sideshow-result-modal">
+    <div class="modal-box" style="width: min(94vw, 560px); text-align: center; border: 2px solid #a855f7; box-shadow: 0 0 40px rgba(168,85,247,0.4);">
+      <div style="font-size:28px;margin-bottom:4px;">⚔️</div>
+      <h2 class="modal-title" style="margin-bottom:4px;color:#f3e8ff;">Secret Sideshow Comparison</h2>
+      <p class="modal-desc" style="margin-bottom:16px;">Private card comparison visible ONLY to the 2 duelists.</p>
+
+      <div style="display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;">
+        <!-- Player 1 Hand -->
+        <div class="sideshow-compare-box" id="sideshow-from-box" style="flex:1;min-width:200px;background:rgba(30,27,75,0.7);border-radius:14px;padding:12px 8px;border:1.5px solid rgba(168,85,247,0.4);">
+          <div style="font-size:1.05rem;font-weight:900;color:#ffd700;" id="sideshow-from-name">Player 1</div>
+          <div id="sideshow-from-eval" style="font-size:0.75rem;color:#c4b5fd;font-weight:700;margin:4px 0 8px;">Pair (K)</div>
+          <div id="sideshow-from-cards" style="display:flex;gap:4px;justify-content:center;margin-bottom:8px;"></div>
+          <div id="sideshow-from-outcome" style="font-weight:900;font-size:0.85rem;">🏆 WINNER</div>
+        </div>
+
+        <div style="font-size:1.3rem;font-weight:900;color:#ec4899;text-shadow:0 0 10px #ec4899;">⚔️</div>
+
+        <!-- Player 2 Hand -->
+        <div class="sideshow-compare-box" id="sideshow-to-box" style="flex:1;min-width:200px;background:rgba(30,27,75,0.7);border-radius:14px;padding:12px 8px;border:1.5px solid rgba(168,85,247,0.4);">
+          <div style="font-size:1.05rem;font-weight:900;color:#ffd700;" id="sideshow-to-name">Player 2</div>
+          <div id="sideshow-to-eval" style="font-size:0.75rem;color:#c4b5fd;font-weight:700;margin:4px 0 8px;">High Card (Q)</div>
+          <div id="sideshow-to-cards" style="display:flex;gap:4px;justify-content:center;margin-bottom:8px;"></div>
+          <div id="sideshow-to-outcome" style="font-weight:900;font-size:0.85rem;">❌ FOLDED</div>
+        </div>
+      </div>
+
+      <div style="margin-top:18px;">
+        <button class="btn-primary-action" onclick="document.getElementById('sideshow-result-modal').classList.remove('active')" style="width:auto;padding:8px 28px;">
+          Continue Game
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Room Friends & Players (Private Coin Protection) -->
+  <div class="modal-overlay" id="room-friends-modal">
+    <div class="modal-box" style="width: min(94vw, 540px); max-height: 85vh; overflow-y: auto;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h2 class="modal-title" style="margin-bottom:0;">👥 Room Friends & Players</h2>
+        <button class="btn-icon" onclick="window.app.closeRoomFriendsModal()" title="Close">✕</button>
+      </div>
+
+      <!-- Privacy Shield Notice -->
+      <div class="privacy-notice-box">
+        <span class="privacy-lock-icon">🔒</span>
+        <div style="font-size:0.8rem;color:#cbd5e1;line-height:1.4;">
+          <strong>Privacy Shield Active:</strong> You can only see your own coin balance. Other friends' total bankrolls and coin counts are private and hidden.
+        </div>
+      </div>
+
+      <!-- Share Room ID Banner -->
+      <div class="room-share-card">
+        <div>
+          <div style="font-size:0.75rem;color:#94a3b8;">Invite Friends with Link or Code:</div>
+          <strong id="modal-room-code-display" style="font-size:1.25rem;color:#ffd700;letter-spacing:1px;">------</strong>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-hero-join" onclick="window.app.copyCurrentRoomLink()" style="padding:6px 14px;font-size:0.8rem;background:linear-gradient(135deg,#10b981,#059669);border-color:#34d399;">
+            🔗 Copy Invite Link
+          </button>
+          <button class="btn-hero-join" onclick="window.app.copyCurrentRoomCode()" style="padding:6px 14px;font-size:0.8rem;">
+            📋 Copy Code
+          </button>
+        </div>
+      </div>
+
+      <!-- List of Friends in Room -->
+      <div class="room-friends-list" id="room-friends-list-container">
+        <!-- Filled dynamically by app.js -->
+      </div>
+
+      <div style="text-align:center;margin-top:16px;">
+        <button class="btn-primary-action" onclick="window.app.closeRoomFriendsModal()" style="width:auto;padding:8px 24px;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Custom Alert / Confirmation for Room Exit -->
+  <div class="modal-overlay" id="modal-confirm-exit" style="z-index: 10050;">
+    <div class="modal-box confirm-exit-modal-box">
+      <button class="modal-close" onclick="window.app.closeConfirmExitModal()" title="Close">&times;</button>
+      
+      <div class="confirm-exit-icon-wrap" id="confirm-exit-icon">
+        <span id="confirm-exit-icon-symbol">👑</span>
+      </div>
+
+      <div id="confirm-exit-badge" class="confirm-exit-badge">
+        ROOM OWNER ALERT
+      </div>
+
+      <h2 class="modal-title" id="confirm-exit-title">Exit Game Room?</h2>
+      
+      <p id="confirm-exit-desc" class="confirm-exit-desc">
+        You are the Room Owner. Leaving will close this game room for everyone and return to the main lobby.
+      </p>
+
+      <div class="confirm-exit-actions">
+        <button class="btn-exit-cancel" onclick="window.app.closeConfirmExitModal()">
+          Stay at Table
+        </button>
+        <button class="btn-exit-proceed" id="btn-confirm-exit-proceed" onclick="window.app.executeLeaveTable()">
+          <span class="btn-exit-icon">🚪</span>
+          <span id="btn-confirm-exit-text">Close & Exit Room</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Room Closed (Owner Left Game) -->
+  <div class="modal-overlay" id="modal-room-closed" style="z-index: 10000;">
+    <div class="modal-box room-closed-modal-box" style="width: min(94vw, 520px); text-align: center; border: 2px solid #f59e0b; box-shadow: 0 0 50px rgba(245,158,11,0.35); position: relative;">
+      <button class="modal-close" onclick="window.app.handleRoomClosedGoHome()" title="Close">&times;</button>
+      <!-- Glowing Host Departed Emblem -->
+      <div style="width:72px;height:72px;margin:0 auto 12px;background:radial-gradient(circle,rgba(245,158,11,0.25) 0%,rgba(15,23,42,0.9) 70%);border:2px solid #f59e0b;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 25px rgba(245,158,11,0.4);">
+        <span style="font-size:36px;animation:pulse 2s infinite;">👑</span>
+      </div>
+
+      <div style="display:inline-block;background:rgba(239,68,68,0.2);border:1px solid #ef4444;color:#fca5a5;font-size:0.75rem;font-weight:900;letter-spacing:1px;padding:3px 12px;border-radius:12px;margin-bottom:8px;">
+        ROOM CLOSED
+      </div>
+
+      <h2 class="modal-title" style="color:#fde047;font-size:1.45rem;margin-bottom:6px;">Game Closed by Room Owner</h2>
+      <p class="modal-desc" id="room-closed-desc" style="font-size:0.95rem;color:#cbd5e1;line-height:1.5;margin-bottom:16px;">
+        The room owner has left the table. The game session has ended.
+      </p>
+
+      <!-- Quick Active Rooms List -->
+      <div style="background:rgba(15,23,42,0.65);border-radius:12px;border:1px solid rgba(255,255,255,0.08);padding:12px;margin-bottom:18px;text-align:left;">
+        <div style="font-size:0.78rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
+          <span>🎲 Popular Active Tables</span>
+          <span style="color:#10b981;font-size:0.72rem;">● LIVE NOW</span>
+        </div>
+        <div id="room-closed-quick-list" style="display:flex;flex-direction:column;gap:6px;max-height:160px;overflow-y:auto;">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Action Buttons: Go to Home Page or Join Other Room -->
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn-primary-action" onclick="window.app.handleRoomClosedGoHome()" style="flex:1;min-width:180px;padding:10px 18px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);border-color:#60a5fa;box-shadow:0 4px 15px rgba(59,130,246,0.35);">
+          <span style="font-size:1.1rem;margin-right:6px;">🏠</span>
+          <span>Go to Home Page</span>
+        </button>
+
+        <button class="btn-primary-action" onclick="window.app.handleRoomClosedJoinOther()" style="flex:1;min-width:180px;padding:10px 18px;background:linear-gradient(135deg,#10b981,#059669);border-color:#34d399;box-shadow:0 4px 15px rgba(16,185,129,0.35);">
+          <span style="font-size:1.1rem;margin-right:6px;">🎲</span>
+          <span>Join Other Room</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/sound.js?v=2.9"></script>
+  <script src="/js/api.js?v=2.9"></script>
+  <script src="/js/gameTable.js?v=2.9"></script>
+  <script src="/js/app.js?v=2.9"></script>
+</body>
+</html>

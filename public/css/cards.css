@@ -1,0 +1,666 @@
+/* 3D Playing Cards Styling for Teen Patti - Premium Casino Edition */
+
+.card-item {
+  width: 32px;
+  height: 46px;
+  perspective: 1000px;
+  position: relative;
+  transition: transform 0.25s ease, margin 0.25s ease;
+  user-select: none;
+}
+
+/* Overlapping hand spread for other seated players */
+.player-cards-container .card-item:nth-child(1) {
+  transform: rotate(-10deg) translateY(2px);
+  z-index: 1;
+}
+
+.player-cards-container .card-item:nth-child(2) {
+  transform: rotate(0deg) translateY(0px);
+  margin-left: -14px;
+  z-index: 2;
+}
+
+.player-cards-container .card-item:nth-child(3) {
+  transform: rotate(10deg) translateY(2px);
+  margin-left: -14px;
+  z-index: 3;
+}
+
+/* =============================================
+   MY CARDS (seat-self) — Positioned Cleanly Above Avatar on Felt
+   ============================================= */
+.seat-self .player-cards-container {
+  position: absolute;
+  top: -102px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0;
+  z-index: 30;
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.95));
+  pointer-events: auto;
+}
+
+.seat-self .card-item {
+  width: 52px;
+  height: 76px;
+  perspective: 1400px;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), margin 0.3s ease;
+}
+
+.seat-self .player-cards-container .card-item:nth-child(1) {
+  transform: rotate(-8deg) translateY(2px);
+  z-index: 1;
+  margin-right: -8px;
+}
+
+.seat-self .player-cards-container .card-item:nth-child(2) {
+  transform: rotate(0deg) translateY(0px);
+  z-index: 2;
+  margin-left: 0;
+}
+
+.seat-self .player-cards-container .card-item:nth-child(3) {
+  transform: rotate(8deg) translateY(2px);
+  z-index: 3;
+  margin-left: -8px;
+}
+
+/* Hover lift effect on self cards */
+.seat-self .card-item:hover {
+  transform: translateY(-12px) scale(1.06) !important;
+  z-index: 20 !important;
+  cursor: pointer;
+}
+
+/* Card Inner with 3D Flip */
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.55);
+  border-radius: 8px;
+}
+
+.card-item.is-flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+/* Card Front & Back */
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 3px 5px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Card Back: Luxury Royal Red/Gold geometric pattern */
+.card-back {
+  background: 
+    radial-gradient(circle at 50% 50%, #881337 0%, #4c0519 60%, #1f020a 100%);
+  border: 1.8px solid #d4af37;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
+}
+
+.card-back::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border: 1px dashed rgba(212, 175, 55, 0.7);
+  border-radius: 6px;
+  background-image: 
+    repeating-linear-gradient(45deg, rgba(212, 175, 55, 0.2) 0, rgba(212, 175, 55, 0.2) 3px, transparent 0, transparent 6px);
+}
+
+.card-back-emblem {
+  position: relative;
+  font-size: 16px;
+  color: #ffd700;
+  font-weight: 900;
+  text-shadow: 0 0 6px rgba(0,0,0,0.9), 0 0 12px rgba(255,215,0,0.6);
+}
+
+/* Card Front: Realistic Bright White Ivory playing card */
+.card-front {
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  color: #0f172a;
+  transform: rotateY(180deg);
+  border: 1.5px solid #cbd5e1;
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.card-front.red-suit {
+  color: #dc2626;
+}
+
+.card-front.black-suit {
+  color: #0f172a;
+}
+
+.card-corner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1;
+}
+
+.card-corner.bottom {
+  transform: rotate(180deg);
+  align-self: flex-end;
+}
+
+.card-rank {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.card-suit-mini {
+  font-size: 11px;
+  margin-top: 1px;
+  line-height: 1;
+}
+
+.card-center-suit {
+  font-size: 18px;
+  line-height: 1;
+  align-self: center;
+  margin: auto 0;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15));
+}
+
+/* Extra prominent typography for self cards */
+.seat-self .card-rank {
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1;
+}
+.seat-self .card-suit-mini {
+  font-size: 11px;
+  margin-top: 1px;
+  line-height: 1;
+}
+.seat-self .card-center-suit {
+  font-size: 22px;
+  line-height: 1;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Gold glow border on own face-up cards */
+.seat-self .card-item.is-flipped .card-inner {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.85), 0 0 0 2px rgba(255, 215, 0, 0.8);
+  border-radius: 8px;
+}
+
+.seat-self .card-front, .seat-self .card-back {
+  border-radius: 8px;
+  padding: 3px 5px;
+  overflow: hidden;
+}
+
+/* =============================================
+   SHOWDOWN WINNER CARDS HIGHLIGHT
+   ============================================= */
+.card-item.is-winner .card-inner {
+  animation: winner-card-glow 1.5s ease-in-out infinite alternate;
+  box-shadow: 0 0 25px rgba(250, 204, 21, 0.9), 0 0 0 2.5px #ffd700 !important;
+}
+
+@keyframes winner-card-glow {
+  0% { transform: rotateY(180deg) scale(1); filter: brightness(1); }
+  100% { transform: rotateY(180deg) scale(1.06); filter: brightness(1.15) drop-shadow(0 0 15px #ffd700); }
+}
+
+/* Hand rank badges for celebration */
+.hand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin: 6px 0;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.hand-badge-trail {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: #fff;
+  border: 1.5px solid #f87171;
+  box-shadow: 0 0 20px rgba(220, 38, 38, 0.6);
+}
+
+.hand-badge-pure {
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: #fff;
+  border: 1.5px solid #c084fc;
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.6);
+}
+
+.hand-badge-sequence {
+  background: linear-gradient(135deg, #2563eb, #0284c7);
+  color: #fff;
+  border: 1.5px solid #60a5fa;
+  box-shadow: 0 0 20px rgba(37, 99, 235, 0.6);
+}
+
+.hand-badge-color {
+  background: linear-gradient(135deg, #059669, #0d9488);
+  color: #fff;
+  border: 1.5px solid #34d399;
+  box-shadow: 0 0 20px rgba(5, 150, 105, 0.6);
+}
+
+.hand-badge-pair {
+  background: linear-gradient(135deg, #d97706, #b45309);
+  color: #fff;
+  border: 1.5px solid #fbbf24;
+  box-shadow: 0 0 20px rgba(217, 119, 6, 0.6);
+}
+
+.hand-badge-high {
+  background: linear-gradient(135deg, #475569, #334155);
+  color: #f1f5f9;
+  border: 1.5px solid #94a3b8;
+  box-shadow: 0 0 15px rgba(71, 85, 105, 0.5);
+}
+
+/* =============================================
+   SIDESHOW DUEL ANIMATION (Table-wide)
+   ============================================= */
+.sideshow-laser-dash {
+  animation: laser-dash-flow 0.6s linear infinite;
+}
+
+@keyframes laser-dash-flow {
+  from { stroke-dashoffset: 32; }
+  to { stroke-dashoffset: 0; }
+}
+
+.player-seat.is-sideshow-duel .player-avatar-wrapper {
+  box-shadow: 0 0 25px #a855f7, 0 0 50px rgba(168, 85, 247, 0.8) !important;
+  border-radius: 50%;
+  animation: duel-seat-ring 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes duel-seat-ring {
+  0% { transform: scale(1); filter: brightness(1); }
+  100% { transform: scale(1.1); filter: brightness(1.3) drop-shadow(0 0 15px #ec4899); }
+}
+
+.sideshow-clash-badge {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 95;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.92), rgba(15, 12, 41, 0.95));
+  border: 1.8px solid #c084fc;
+  border-radius: 20px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.8), 0 0 25px rgba(192, 132, 252, 0.6);
+  animation: badge-pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  backdrop-filter: blur(6px);
+}
+
+.sideshow-badge-icon {
+  font-size: 26px;
+  filter: drop-shadow(0 0 8px #ffd700);
+  animation: sword-clash-rock 0.4s ease-in-out infinite alternate;
+}
+
+.sideshow-badge-text {
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  color: #f3e8ff;
+  text-shadow: 0 0 8px rgba(192, 132, 252, 0.8);
+  white-space: nowrap;
+}
+
+@keyframes badge-pop-in {
+  0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+@keyframes sword-clash-rock {
+  0% { transform: rotate(-12deg) scale(0.95); }
+  100% { transform: rotate(12deg) scale(1.15); }
+}
+
+/* Animated Flying Chips (bet) */
+.flying-chip {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fde047 0%, #ca8a04 100%);
+  border: 1.5px dashed #fff;
+  z-index: 80;
+  pointer-events: none;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+  transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* =============================================
+   TIP COIN ANIMATION: Player → Dealer
+   ============================================= */
+.tip-flying-coin {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fef08a 0%, #ffd700 40%, #b45309 100%);
+  border: 2px solid rgba(255,255,255,0.6);
+  box-shadow: 
+    0 0 10px rgba(255, 215, 0, 0.9),
+    0 0 20px rgba(255, 215, 0, 0.5),
+    inset 0 2px 4px rgba(255,255,255,0.4);
+  z-index: 90;
+  pointer-events: none;
+  transform: translate(0, 0) rotate(0deg) scale(1);
+  opacity: 1;
+  /* Coin face: ₹ symbol */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 900;
+  color: #7c2d12;
+  text-shadow: 0 1px 1px rgba(255,255,255,0.5);
+}
+
+.tip-flying-coin::before {
+  content: '₹';
+}
+
+@keyframes tip-coin-arc {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  30% {
+    transform: translate(calc(var(--tx) * 0.3), calc(var(--ty) * 0.5)) rotate(calc(var(--spin) * 0.3)) scale(1.35);
+    opacity: 1;
+  }
+  70% {
+    transform: translate(calc(var(--tx) * 0.75), calc(var(--ty) * 0.85)) rotate(calc(var(--spin) * 0.75)) scale(1.1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) rotate(var(--spin)) scale(0.4);
+    opacity: 0;
+  }
+}
+
+.tip-flying-coin.tip-coin-fly {
+  animation: tip-coin-arc var(--dur, 750ms) cubic-bezier(0.3, 0, 0.6, 1) forwards;
+}
+
+/* Winning Card Glow */
+.card-item.is-winner .card-inner {
+  border: 2px solid #ffd700;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.9);
+  animation: win-glow 1.2s infinite alternate;
+}
+
+@keyframes win-glow {
+  0% { transform: rotateY(180deg) scale(1); }
+  100% { transform: rotateY(180deg) scale(1.12); }
+}
+
+/* ==========================================================
+   REALISTIC CASINO POKER CHIPS & STACKS
+   ========================================================== */
+
+.casino-chip-stack {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  position: relative;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6));
+}
+
+.poker-chip-3d {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.7),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.6);
+  margin-top: -18px;
+  transition: transform 0.2s ease;
+}
+
+.poker-chip-3d:first-child {
+  margin-top: 0;
+}
+
+/* Outer dashed edge representing casino clay chip inserts */
+.poker-chip-3d::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 255, 255, 0.85);
+  pointer-events: none;
+}
+
+/* Center inlay */
+.poker-chip-3d .chip-inlay {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7px;
+  font-weight: 900;
+  color: #111;
+  text-shadow: none;
+}
+
+/* Chip Denomination Colorways */
+/* ₹1,000 (Red) */
+.chip-red {
+  background: radial-gradient(circle, #ef4444 0%, #dc2626 60%, #991b1b 100%);
+  border: 1px solid #7f1d1d;
+}
+.chip-red .chip-inlay { color: #dc2626; }
+
+/* ₹5,000 (Green) */
+.chip-green {
+  background: radial-gradient(circle, #22c55e 0%, #16a34a 60%, #14532d 100%);
+  border: 1px solid #14532d;
+}
+.chip-green .chip-inlay { color: #15803d; }
+
+/* ₹25,000 (Black / Dark Slate) */
+.chip-black {
+  background: radial-gradient(circle, #334155 0%, #1e293b 60%, #0f172a 100%);
+  border: 1px solid #020617;
+}
+.chip-black .chip-inlay { color: #0f172a; }
+
+/* ₹1,00,000 (Gold / VIP) */
+.chip-gold {
+  background: radial-gradient(circle, #fde047 0%, #eab308 50%, #ca8a04 100%);
+  border: 1px solid #854d0e;
+  box-shadow: 0 0 8px rgba(234, 179, 8, 0.6);
+}
+.chip-gold .chip-inlay { color: #854d0e; background: #fffbeb; }
+
+/* ₹5,00,000+ (Purple / Royal) */
+.chip-purple {
+  background: radial-gradient(circle, #c084fc 0%, #9333ea 60%, #581c87 100%);
+  border: 1px solid #3b0764;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.6);
+}
+.chip-purple .chip-inlay { color: #6b21a8; }
+
+/* Pot Chip Tray (Clusters of chips in pot center) */
+.pot-chips-cluster {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+  justify-content: center;
+  margin-top: 6px;
+  height: 34px;
+}
+
+/* =============================================
+   RESPONSIVE CARD SCALING (PORTRAIT & ROTATED LANDSCAPE)
+   ============================================= */
+
+/* Mobile Portrait (<640px) */
+@media (max-width: 640px) {
+  .card-item {
+    width: 30px;
+    height: 44px;
+  }
+  
+  .card-front, .card-back {
+    padding: 2px 3px;
+    border-radius: 5px;
+  }
+  
+  .card-rank {
+    font-size: 9px;
+  }
+  
+  .card-suit-mini {
+    font-size: 8px;
+  }
+  
+  .card-center-suit {
+    font-size: 13px;
+  }
+
+  .card-back-emblem {
+    font-size: 11px;
+  }
+
+  /* Self Player Hand in Mobile Portrait */
+  .seat-self .player-cards-container {
+    bottom: 98%;
+  }
+
+  .seat-self .card-item {
+    width: 48px;
+    height: 68px;
+  }
+
+  .seat-self .card-front, .seat-self .card-back {
+    padding: 3px 5px;
+    border-radius: 6px;
+  }
+
+  .seat-self .card-rank {
+    font-size: 13px;
+  }
+
+  .seat-self .card-suit-mini {
+    font-size: 11px;
+  }
+
+  .seat-self .card-center-suit {
+    font-size: 20px;
+  }
+
+  .seat-self .card-back-emblem {
+    font-size: 14px;
+  }
+}
+
+/* Mobile Landscape (<520px height) — Rotated Phone View */
+@media (max-height: 520px) and (orientation: landscape) {
+  .card-item {
+    width: 24px;
+    height: 36px;
+  }
+  
+  .card-front, .card-back {
+    padding: 1px 2px;
+    border-radius: 4px;
+  }
+  
+  .card-rank {
+    font-size: 8px;
+  }
+  
+  .card-suit-mini {
+    font-size: 7px;
+  }
+  
+  .card-center-suit {
+    font-size: 10px;
+  }
+
+  .card-back-emblem {
+    font-size: 9px;
+  }
+
+  /* Self Player Hand in Mobile Landscape */
+  .seat-self .player-cards-container {
+    bottom: 92%;
+  }
+
+  .seat-self .card-item {
+    width: 38px;
+    height: 52px;
+  }
+
+  .seat-self .card-front, .seat-self .card-back {
+    padding: 2px 4px;
+    border-radius: 5px;
+  }
+
+  .seat-self .card-rank {
+    font-size: 11px;
+  }
+
+  .seat-self .card-suit-mini {
+    font-size: 9px;
+  }
+
+  .seat-self .card-center-suit {
+    font-size: 15px;
+  }
+
+  .seat-self .card-back-emblem {
+    font-size: 11px;
+  }
+}
+

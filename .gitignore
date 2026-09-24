@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment and sensitive keys / credentials
+.env
+.env.*
+*.pem
+DEMO.pem
+CREDS.MD
+*.key
+*.cert
+
+# Database & Runtime Data
+server/data/*.db
+server/data/*.sqlite
+server/data/*.sqlite3
+server/data/users.json
+server/data/*.log
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Temporary & Test verification screenshots in root
+/*_verified.png
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
