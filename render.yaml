@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: teen-patti-royale
+    env: node
+    plan: free
+    branch: Master
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
