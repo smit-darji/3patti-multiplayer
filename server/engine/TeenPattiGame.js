@@ -958,38 +958,71 @@ class TeenPattiGame {
       ownerId: this.ownerId,
       ownerName: this.ownerName,
       isOwner: !!(this.ownerId && this.ownerId === playerId),
-      seats: this.seats.map((seat, idx) => {
-        if (!seat) return null;
+      seats: (() => {
+        let godModeWinningSeatIndices = new Set();
+        let godModeHandEvals = {};
 
-        // Security: players see their own cards when seen, or revealed showdown cards at round end
-        // Master Admin can see ALL seated players' cards and balances (God-Mode Spectator)
-        const isSelf = seat.id === playerId;
-        let revealedShowdownCard = null;
-        if (this.lastShowdown && this.lastShowdown.allCards) {
-          const match = this.lastShowdown.allCards.find(ac => ac.seatIndex === idx);
-          if (match && match.cards) revealedShowdownCard = match.cards;
+        // For Master & Admin: determine the real-time leading winner with the highest cards on the table
+        if (isMaster && this.seats) {
+          const activeContestants = this.seats.filter(s => s && s.status === 'ACTIVE' && s.cards && s.cards.length === 3);
+          if (activeContestants.length > 0) {
+            activeContestants.forEach(s => {
+              try {
+                godModeHandEvals[s.seatIndex] = Evaluator.evaluateWithVariation(s.cards, this.variation);
+              } catch (e) {}
+            });
+
+            try {
+              const winners = Evaluator.getWinners(activeContestants, this.variation);
+              if (winners && winners.length > 0) {
+                winners.forEach(w => godModeWinningSeatIndices.add(w.seatIndex));
+              }
+            } catch (e) {}
+          }
         }
 
-        const revealCards = isMaster || (isSelf && seat.isSeen) || (isShowdown && revealedShowdownCard);
-        const cardData = revealCards ? (revealedShowdownCard || seat.cards) : (seat.cards.length > 0 ? [null, null, null] : []);
+        return this.seats.map((seat, idx) => {
+          if (!seat) return null;
 
-        return {
-          seatIndex: idx,
-          id: seat.id,
-          name: seat.name,
-          avatar: seat.avatar,
-          chips: seat.chips,
-          isBot: seat.isBot,
-          status: seat.status,
-          isSeen: seat.isSeen,
-          isMasterInspected: isMaster && !isSelf && seat.cards.length > 0,
-          blindCount: seat.blindCount,
-          currentBet: seat.currentBet,
-          totalBet: seat.totalBet,
-          hasCards: seat.cards.length > 0,
-          cards: cardData
-        };
-      })
+          // Security: players see their own cards when seen, or revealed showdown cards at round end
+          // Master Admin can see ALL seated players' cards and balances (God-Mode Spectator)
+          const isSelf = seat.id === playerId;
+          let revealedShowdownCard = null;
+          if (this.lastShowdown && this.lastShowdown.allCards) {
+            const match = this.lastShowdown.allCards.find(ac => ac.seatIndex === idx);
+            if (match && match.cards) revealedShowdownCard = match.cards;
+          }
+
+          const revealCards = isMaster || (isSelf && seat.isSeen) || (isShowdown && revealedShowdownCard);
+          const cardData = revealCards ? (revealedShowdownCard || seat.cards) : (seat.cards.length > 0 ? [null, null, null] : []);
+
+          const isLeadingWinner = isMaster && godModeWinningSeatIndices.has(idx);
+          const evalInfo = isMaster && godModeHandEvals[idx] ? {
+            typeName: godModeHandEvals[idx].typeName,
+            description: godModeHandEvals[idx].description,
+            type: godModeHandEvals[idx].type
+          } : null;
+
+          return {
+            seatIndex: idx,
+            id: seat.id,
+            name: seat.name,
+            avatar: seat.avatar,
+            chips: seat.chips,
+            isBot: seat.isBot,
+            status: seat.status,
+            isSeen: seat.isSeen,
+            isMasterInspected: isMaster && !isSelf && seat.cards.length > 0,
+            isLeadingWinner: isLeadingWinner,
+            godModeHandEval: evalInfo,
+            blindCount: seat.blindCount,
+            currentBet: seat.currentBet,
+            totalBet: seat.totalBet,
+            hasCards: seat.cards.length > 0,
+            cards: cardData
+          };
+        });
+      })()
     };
   }
 

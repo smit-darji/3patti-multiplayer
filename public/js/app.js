@@ -1808,7 +1808,13 @@ class TeenPattiApp {
     const autoBlindCheckbox = document.getElementById('checkbox-auto-blind');
 
     if (this.isMasterUser()) {
-      statusMsgEl.innerHTML = `<span style="color:#ffd700;font-weight:800;">👑 MASTER & ADMIN GOD-MODE SPECTATOR — Viewing All Live Open Cards in Real-Time</span>`;
+      const leadingWinner = this.tableState?.seats?.find(s => s && s.isLeadingWinner);
+      let leaderText = '';
+      if (leadingWinner) {
+        const handName = leadingWinner.godModeHandEval ? leadingWinner.godModeHandEval.typeName : 'Highest Hand';
+        leaderText = ` • 🟢 <strong style="color:#34d399;">Table Leader: ${this.escapeHtml(leadingWinner.name)} (${this.escapeHtml(handName)})</strong>`;
+      }
+      statusMsgEl.innerHTML = `<span style="color:#ffd700;font-weight:800;">👑 MASTER & ADMIN GOD-MODE SPECTATOR — Viewing All Live Open Cards${leaderText}</span>`;
       btnPack.disabled = true;
       btnSee.disabled = true;
       btnSideshow.disabled = true;

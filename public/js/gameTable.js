@@ -86,37 +86,72 @@ class GameTable {
     return `₹${amount.toLocaleString('en-IN')}`;
   }
 
-  // Symmetrical dynamic radial positioning around table ellipse (supports 5, 10, 15, 20 players)
+  // Symmetrical dynamic radial positioning around table ellipse (supports 5, 6, 8, 10, 15, 20 players)
+  // Ensures top dealer area (Scarlett) has a clear 35% corridor with zero player seat occlusion
   getSeatCoordinates(seatIndex, userSeatIndex = -1, totalSeats = 10) {
     const total = Math.max(2, totalSeats || 10);
-    // If user is seated, rotate seats so user is always at bottom (index 0 relative)
+    // If user is seated, rotate seats so user is always at bottom
     const offset = userSeatIndex !== -1 ? (seatIndex - userSeatIndex + total) % total : seatIndex;
-    
-    // Angle: 0 starts at bottom (90 deg in cartesian) and moves clockwise
-    const angleStep = 360 / total;
-    const angleDeg = 90 + (offset * angleStep);
-    const rad = (angleDeg * Math.PI) / 180;
 
     // Table ellipse radii (optimized for spacious non-overlapping layout)
     let rx = 40; // % horizontal radius
     let ry = 34; // % vertical radius
 
     if (total > 10) {
-      rx = 42;
-      ry = 36;
+      rx = 41;
+      ry = 35;
     } else if (total <= 6) {
       rx = 38;
       ry = 32;
     }
 
+    let angleDeg = 90;
+
+    // Top dealer clearance zone: 244 deg (top-left) to 296 deg (top-right)
+    // No seat ever sits at 270 deg (directly behind the dealer)
+    if (total % 2 === 0) {
+      // Even number of seats: split equally into left half (offset 0..total/2-1) and right half (offset total/2..total-1)
+      // Left half goes clockwise from bottom-left (104 deg) to top-left (244 deg)
+      // Right half goes clockwise from top-right (296 deg) to bottom-right (436 deg / 76 deg)
+      const half = total / 2;
+      if (offset < half) {
+        const span = 140; // 244 - 104
+        const step = half > 1 ? span / (half - 1) : 0;
+        angleDeg = 104 + offset * step;
+      } else {
+        const k = offset - half;
+        const span = 140; // 436 - 296
+        const step = half > 1 ? span / (half - 1) : 0;
+        angleDeg = 296 + k * step;
+      }
+    } else {
+      // Odd number of seats: offset 0 is at bottom center (90 deg)
+      // Left half ((total-1)/2 seats) goes from bottom-left to top-left (244 deg)
+      // Right half ((total-1)/2 seats) goes from top-right (296 deg) to bottom-right
+      if (offset === 0) {
+        angleDeg = 90;
+      } else {
+        const sideCount = (total - 1) / 2;
+        if (offset <= sideCount) {
+          const startAngle = 90 + (140 / (sideCount + 0.8));
+          const step = (244 - startAngle) / Math.max(1, sideCount - 1);
+          angleDeg = sideCount === 1 ? 234 : startAngle + (offset - 1) * step;
+        } else {
+          const k = offset - sideCount - 1;
+          const endAngle = 450 - (140 / (sideCount + 0.8));
+          const step = (endAngle - 296) / Math.max(1, sideCount - 1);
+          angleDeg = sideCount === 1 ? 306 : 296 + k * step;
+        }
+      }
+    }
+
+    const rad = (angleDeg * Math.PI) / 180;
     let left = 50 + rx * Math.cos(rad);
     let top = 50 + ry * Math.sin(rad);
 
-    // Fine-tune top center seat and bottom self seat
-    if (offset === 0) {
+    // Fine-tune bottom center seat for odd tables when seated
+    if (offset === 0 && userSeatIndex !== -1 && total % 2 !== 0) {
       top = Math.min(85, 50 + ry);
-    } else if (total % 2 === 0 && offset === total / 2) {
-      top = Math.max(7.5, 50 - ry);
     }
 
     return { left, top, isSelf: offset === 0 && userSeatIndex !== -1 };
@@ -171,13 +206,21 @@ class GameTable {
         const isWinner = (state.status === 'SHOWDOWN' || state.status === 'COUNTDOWN' || state.status === 'WAITING') &&
                          state.lastShowdown && state.lastShowdown.winners &&
                          state.lastShowdown.winners.some(w => w.seatIndex === i);
+        const isLeadingWinner = !!seatData.isLeadingWinner;
+        const godModeHandLabel = seatData.godModeHandEval ? seatData.godModeHandEval.typeName : 'Highest Hand';
         const isPacked = seatData.status === 'PACKED';
         const avatarUrl = this.getAvatarUrl(seatData.avatar);
         const safeName = this.escapeHtml(seatData.name);
 
         seatEl.innerHTML = `
-          <div class="player-pod ${isTurn ? 'is-turn' : ''} ${isWinner ? 'is-winner-seat' : ''} ${isPacked ? 'is-packed' : ''}">
+          <div class="player-pod ${isTurn ? 'is-turn' : ''} ${isWinner ? 'is-winner-seat' : ''} ${isPacked ? 'is-packed' : ''} ${isLeadingWinner ? 'is-godmode-leader' : ''}">
             ${isWinner ? '<div class="winner-seat-crown">👑</div>' : ''}
+            ${isLeadingWinner && !isWinner ? `
+              <div class="godmode-winner-tag" title="Admin God-Mode: Currently holding the highest cards on table">
+                <span class="godmode-tag-icon">🟢</span> HIGHEST: ${this.escapeHtml(godModeHandLabel)}
+              </div>
+              <div class="godmode-winner-crown" title="Leading Hand">🌟</div>
+            ` : ''}
 
             <!-- Current round 3D bet chips -->
             ${seatData.currentBet > 0 ? `
@@ -195,8 +238,8 @@ class GameTable {
               <img src="${avatarUrl}" class="player-avatar-img" alt="${safeName}" />
               
               <!-- Status Tag -->
-              <span class="player-status-badge ${isWinner ? 'status-active' : 'status-' + seatData.status.toLowerCase()}" ${isWinner ? 'style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;font-weight:900;border:1px solid #ffd700;"' : ''}>
-                ${isWinner ? '👑 WINNER' : (seatData.status === 'ACTIVE' ? (seatData.isSeen ? 'SEEN' : 'BLIND') : seatData.status)}
+              <span class="player-status-badge ${isWinner ? 'status-active' : 'status-' + seatData.status.toLowerCase()}" ${isWinner ? 'style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;font-weight:900;border:1px solid #ffd700;"' : (isLeadingWinner ? 'style="background:linear-gradient(135deg,#059669,#10b981);color:#fff;font-weight:900;border:1px solid #34d399;box-shadow:0 0 10px rgba(16,185,129,0.8);"' : '')}>
+                ${isWinner ? '👑 WINNER' : (seatData.status === 'ACTIVE' ? ((seatData.isSeen ? 'SEEN' : 'BLIND') + (isLeadingWinner ? ' • 🟢 #1' : '')) : seatData.status)}
               </span>
             </div>
 
